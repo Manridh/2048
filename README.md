@@ -1,3 +1,3 @@
 # To start the game
 
-# $ python3 puzzle.py
+# $ python3 2048game.py
