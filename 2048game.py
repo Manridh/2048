@@ -1,4 +1,3 @@
-
 import random
 from tkinter import Frame, Label, CENTER
 
@@ -6,7 +5,7 @@ import logic
 import constants as c
 
 
-class 2048(Frame):
+class Game2048(Frame):
     def __init__(self):
         Frame.__init__(self)
 
@@ -23,13 +22,13 @@ class 2048(Frame):
                          c.KEY_K: logic.up, c.KEY_J: logic.down}
         
         self.grid_cells = []
-        self.gridIi()
-        self.matrixIi()
-        self.grideUpdate()
+        self.GridInit()
+        self.matrixInit()
+        self.gridUpdateCell()
 
         self.mainloop()
 
-    def gridIi(self):
+    def GridInit(self):
         background = Frame(self, bg=c.BACKGROUND_COLOR_GAME,
                            width=c.SIZE, height=c.SIZE)
         background.grid()
@@ -50,16 +49,16 @@ class 2048(Frame):
 
             self.grid_cells.append(grid_row)
 
-    def general(self):
+    def gen(self):
         return random.randint(0, c.GRID_LEN - 1)
 
-    def matrixIi(self):
+    def matrixInit(self):
         self.matrix = logic.new_game(4)
         self.history_matrixs = list()
         self.matrix = logic.add_two(self.matrix)
         self.matrix = logic.add_two(self.matrix)
 
-    def grideUpdate(self):
+    def gridUpdateCell(self):
         for i in range(c.GRID_LEN):
             for j in range(c.GRID_LEN):
                 new_number = self.matrix[i][j]
@@ -76,7 +75,7 @@ class 2048(Frame):
         key = repr(event.char)
         if key == c.KEY_BACK and len(self.history_matrixs) > 1:
             self.matrix = self.history_matrixs.pop()
-            self.grideUpdate()
+            self.gridUpdateCell()
             print('back on step total step:', len(self.history_matrixs))
         elif key in self.commands:
             self.matrix, done = self.commands[repr(event.char)](self.matrix)
@@ -84,25 +83,24 @@ class 2048(Frame):
                 self.matrix = logic.add_two(self.matrix)
                 # record last move
                 self.history_matrixs.append(self.matrix)
-                self.grideUpdate()
-
+                self.gridUpdateCell()
                 done = False
-                if logic.state_of_game(self.matrix) == 'win':
+                if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(
                         text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                     self.grid_cells[1][2].configure(
                         text="Win!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
-                if logic.state_of_game(self.matrix) == 'lose':
+                if logic.game_state(self.matrix) == 'lose':
                     self.grid_cells[1][1].configure(
                         text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                     self.grid_cells[1][2].configure(
                         text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
-    def Next_turn(self):
-        index = (self.general(), self.general())
+    def nextgenerate(self):
+        index = (self.gen(), self.gen())
         while self.matrix[index[0]][index[1]] != 0:
-            index = (self.general(), self.general())
+            index = (self.gen(), self.gen())
         self.matrix[index[0]][index[1]] = 2
 
 
-2048 = 2048()
+game2048 = Game2048()
